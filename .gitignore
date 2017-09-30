@@ -1,0 +1,13 @@
+폴더 제외
+Library/
+ProjectSettings/
+Temp/
+Images/
+Fonts/
+.vs/
+
+특정 확장자 파일 제외
+*.meta
+*.sln
+*.unity
+*.csproj
