@@ -5,6 +5,7 @@ using System.CodeDom.Compiler;
 using System.IO;
 using System.Reflection;
 using CustomEdit;
+
 public class EditorScriptCreator
 {
     // 현재 선택된 파일이 커스텀 에디터를 작성할 수 있는 파일인지 확인
@@ -14,7 +15,6 @@ public class EditorScriptCreator
         UnityEngine.Object obj = Selection.activeObject;
         if (obj == null) return false; //선택된 객체가 없는경우 false.
         if (Path.GetExtension(AssetDatabase.GetAssetPath(obj)) != ".cs") return false;//객체의 확장명이 .cs가 아닌경우(=스크립트가 아닌경우)에도 false 반환.
-        if (AssetDatabase.LoadAssetAtPath<MonoScript>(Application.dataPath + "/Editors/" + GetEdtiorClassName(obj.name) + ".cs") != null) return false; //이미 편집스크립트가 있는경우에도 false 반환.
         Assembly asm = typeof(ICustomEditable).Assembly; //CustomEditableClass에 대한 어셈블리 인스턴스 생성.
         System.Type type = asm.GetType(obj.name);//어셈블리로부터, 유니티의 Monobehaviour는 파일이름과 클래스이름이 같은걸 이용해 파일이름을 매개변수로해 현재 객체의 타입을 가져온다.
         foreach (System.Type ifc in type.GetInterfaces()) if (ifc.Equals(typeof(ICustomEditable))) return true; //ICustomEditabble을 상속하는경우 true 반환
@@ -27,7 +27,13 @@ public class EditorScriptCreator
         Object target = Selection.activeObject;
         string name = target.name; // 유니티의 Script Component로서 삽입될수있는 .cs파일은 모두 파일명과 클래스명이 같다. 
         string path = Application.dataPath+"/Editors/"+ GetEdtiorClassName(name) + ".cs";
-        MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(path);
+        MonoScript exist = AssetDatabase.LoadAssetAtPath<MonoScript>(path);
+        //이미 파일이 있는경우. 기존의 파일을 보여주고 나머지 내용을 생략.
+        if(exist!=null)
+        {
+            EditorGUIUtility.PingObject(exist);
+            return;
+        }
         string source = CreateEditorSource(name); //컴파일할 소스
         //컴파일 에러가 없는경우 파일을 작성한다.
         if(CompileErrorCheck(source))
