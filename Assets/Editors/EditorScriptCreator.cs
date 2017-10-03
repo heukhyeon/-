@@ -27,9 +27,9 @@ public class EditorScriptCreator
         Object target = Selection.activeObject;
         string name = target.name; // 유니티의 Script Component로서 삽입될수있는 .cs파일은 모두 파일명과 클래스명이 같다. 
         string path = Application.dataPath+"/Editors/"+ GetEdtiorClassName(name) + ".cs";
-        MonoScript exist = AssetDatabase.LoadAssetAtPath<MonoScript>(path);
+        MonoScript exist = AssetDatabase.LoadAssetAtPath<MonoScript>("Assets/Editors/"+ GetEdtiorClassName(name) + ".cs");
         //이미 파일이 있는경우. 기존의 파일을 보여주고 나머지 내용을 생략.
-        if(exist!=null)
+        if (exist!=null)
         {
             EditorGUIUtility.PingObject(exist);
             return;
@@ -38,7 +38,7 @@ public class EditorScriptCreator
         //컴파일 에러가 없는경우 파일을 작성한다.
         if(CompileErrorCheck(source))
         {
-            File.WriteAllText(path, source);
+            File.WriteAllText(path, source,System.Text.Encoding.UTF8);
             //AssetDatabase를 갱신해 새로운 파일을 확인한다.
             AssetDatabase.Refresh();
             //Asset앞의 경로를 지운다.
@@ -82,10 +82,10 @@ using UnityEditor;
 [CustomEditor(typeof("+target+@"))]
 public class "+GetEdtiorClassName(target)+@" : ExtendEditor<"+target+@">
 {
-        public override void OnInspectorGUI()
-        {
+    protected override void OnCustomGUI()
+    {
 
-        }
+    }
 }";
         return code.Remove(0, 2);//가독성을 위해 코딩부분에서 처음 엔터친 부분을 제거한다.
     }

@@ -4,13 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using static CodePack.CorutineHelper;
-
-public class StageSelectDisk : MonoBehaviour
+using CustomEdit;
+public class StageSelectDisk : MonoBehaviour,ICustomEditable
 {
-    [SerializeField]
-    AudioClip TurnEffect; //회전시 출력할 효과음
-    [SerializeField]
-    AudioClip SelectEffect; //앱 선택시 출력할 효과음
+    public AudioClip TurnEffect; //회전시 출력할 효과음
+    public AudioClip SelectEffect; //앱 선택시 출력할 효과음
     [SerializeField]
     Text AppTitle; //선택한 앱 이름 출력.
     AudioSource Au; //현재 클래스를 가진 객체가 가진 AudioSource
